@@ -1,11 +1,27 @@
-<html>
-<!-- Kevin Cantu (c) 2011 -->
+/* Kevin Cantu (c) 2011 
+   [http://kevincantu.org]
+   library to draw dragon curves in SVG
 
-<head>
+   requires: underscore.js [http://documentcloud.github.com/underscore/]
+*/
 
-<script src='./lib/underscore.js'></script>
 
-<script>
+/////////////////////////////////////////
+// Node.JS
+/*
+var util = require("util");
+var _ = require("/code/dragon/underscore.js")._;
+
+var show = function (o) { 
+   U = require("util");
+   U.print(U.inspect(o) + "\n\n");
+   return o;
+}
+*/
+
+
+/////////////////////////////////////////
+// MATRIX MATH
 
 Matrix = {};
 
@@ -39,21 +55,8 @@ Matrix.plus = function ( v1, v2 ) {
 }
 
 
-</script>
-
-
-
-
-
-
-
-
-<script>
-
-var show = function (o) { 
-   console.log(o)
-   return o;
-}
+/////////////////////////////////////////
+// DRAGON CURVE MAKING
 
 var mapBetween = function (xs, k) {
    // xs is an array
@@ -122,79 +125,30 @@ var growPath = function (oldpath) {
    return path;
 }
 
-var path0 = [ [0,0], [1,1], [2,2], [3,3], [4,4], [5,5] ];
-show("path0: \n");
-show(path0);
-
-var path1 = growPath(path0);
-show("path1: \n");
-show(path1); 
-
-var svg2 = pathToSVG(path1); 
-show("svg2: \n");
-show(svg2);
-
-
-
 var fullSVG = function (path) {
-   var header = '<svg xmlns=\'http://www.w3.org/2000/svg\' style=\'height: 500px; width: 800px\'>'
-   var polygon = '<path d=\'' + pathToSVG(path) + '\' style=\'fill:#cccccc;stroke:#000000;stroke-width:2\'' + '/>';
+   var header = '<svg' +
+                ' xmlns=\'http://www.w3.org/2000/svg\'' +
+                ' style=\'height: 500px; width: 800px\'>'
+
+   var polygon = '<path' + 
+                 ' d=\'' + pathToSVG(path) + '\'' +
+                 ' style=\'stroke:#000;stroke-width:2\'' + 
+                 ' />';
    var footer = '</svg>'
 
    return header + polygon + footer;
 }
 
+var growPathN = function (path, n) {
+   var currentPath = path;
+   for ( n; n > 0; n-=1 ) {
+      currentPath = growPath(currentPath);
+   } 
+   return currentPath;
+}
 
-
-
-
-//var paper = Raphael(document.getElementById("drawing"), 600, 400);
-
-/*
-var paper = Raphael(["drawing", 320, 200, {
-    type: "rect",
-    x: 10,
-    y: 10,
-    width: 25,
-    height: 25,
-    stroke: "#f00"
-}, {
-    type: "text",
-    x: 30,
-    y: 40,
-    text: "Dump"
-}]);
-
-//var c = paper.path(svgString);
-//var d = paper.path("M10 10L90 90");
-*/
-
-</script>
-
-
-
-</head>
-<body>
-   <h1>Dragon Curve</h1>
-
-   <div id='drawing'>
-   </div>
-   
-   <script>
-      var growPathN = function (path, n) {
-         var currentPath = path;
-         for ( n; n > 0; n-=1 ) {
-            currentPath = growPath(currentPath);
-         } 
-         return currentPath;
-      }
-
-
-
-      var drawing = document.getElementById('drawing');
-      drawing.innerHTML = fullSVG(growPathN( [[200,200], 
-                                              [600,200]], 14));
-   </script>
-
-</body>
-</html>
+var dragon = function (id, start, end, orderN) {
+   var drawing = document.getElementById( id );
+   drawing.innerHTML = fullSVG( growPathN( [start, end], 
+                                           orderN ));
+}
