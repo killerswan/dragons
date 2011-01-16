@@ -113,7 +113,8 @@ var growPath = function (oldpath) {
       var a = pair[0];
       var b = pair[1];
       side = !side; 
-      var newPoint = Matrix.plus(a, Matrix.mult( side ? left : right, Matrix.minus(b, a) ));
+      var newPoint = Matrix.plus(a, Matrix.mult( side ? left : right, 
+                                                 Matrix.minus(b, a) ));
       return [ a, newPoint ];
    } 
 
@@ -152,3 +153,26 @@ var dragon = function (id, start, end, orderN) {
    drawing.innerHTML = fullSVG( growPathN( [start, end], 
                                            orderN ));
 }
+
+var stepDragon = function (id, start, end, orderN) {
+   var drawing = document.getElementById( id );
+
+   var currentPath = [start, end];
+
+   var n = orderN;
+
+   var loop = function () {
+      drawing.innerHTML = fullSVG(currentPath);
+      currentPath = growPath(currentPath);
+
+      if (n > 0) {
+         n -= 1;
+         window.setTimeout(loop, 900);
+      }
+   }
+
+   //window.setTimeout(loop, 10);
+   loop();
+}
+
+
