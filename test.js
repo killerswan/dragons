@@ -35,7 +35,7 @@ show(grow(mm,nn, 1));
 
 
 
-var growSet = function (set) {
+var growSet0 = function (set) {
    //var args = Array.prototype.slice.call(arguments);
    if (set.length < 2) {
       return [];
@@ -64,11 +64,12 @@ var growSet = function (set) {
    return nextSet;
 }
 
+
 var ss = [mm, nn];
 
-show(growSet(ss))
-show(growSet(growSet(ss)))
-show(growSet(growSet(growSet(ss))))
+show(growSet0(ss))
+show(growSet0(growSet0(ss)))
+show(growSet0(growSet0(growSet0(ss))))
 
 
 var toSVG = function (point0, point1) { 
@@ -136,7 +137,18 @@ var better = insertF( tt, function (a, c) {
                  M.mult( side ? left : right, M.minus(c, a) ));
 });
 
+var growSet = function (set) {
+   var side = 0;
+   return insertF( set, function (a, c) {
+      side = !side; // closure :)
+      return M.plus(a, 
+                    M.mult( side ? left : right, M.minus(c, a) ));
+   });
+}
+
 show(better);
+show(growSet([mm, nn, oo]));
+show(growSet(growSet([mm, nn, oo])));
 
 var between = function (list, func) {
    // note, this is destructive to argument `list`
@@ -162,6 +174,7 @@ var between = function (list, func) {
    }
 }
 
+// IS THERE A WAY TO MERGE insertF() AND between() ?
 
 tt = [mm, nn, oo];
 
