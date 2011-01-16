@@ -1,10 +1,11 @@
 var util = require("util");
-_ = require("/code/3p/underscore/underscore/underscore.js")._;
+_ = require("/code/dragon/underscore.js")._;
 var M = require("/code/dragon/matrix.js");
 
 var show = function (o) { 
    U = require("util");
    U.print(U.inspect(o) + "\n\n");
+   return o;
 }
 
 
@@ -190,6 +191,141 @@ show(toPath(tt));
 
 tt = [mm, nn];
 show(toPath(tt));
+
+
+
+var mapBetween = function (xs, k) {
+   // xs is an array
+   // k is a function
+
+   var pairs = function (list) {
+      var ys = list.slice(1 /*, list.length */);
+      var zs = _.zip(list, ys);
+
+      // the last argument is solitary, not a pair
+/*    var last = zs.length - 1;
+      zs[last] = [ zs[last][0] ]; */
+      zs.pop();
+
+      return zs;
+   }
+
+   return _.map(pairs(xs), k);
+}
+
+var mapCatBetween = function (xs, k) {
+   // should be able to fold, though...
+   var combined = [];
+   _.each( mapBetween(xs, k), 
+      function (x) {
+         combined = combined.concat(x);
+      }
+   )
+   return combined;
+}
+
+
+var test1 = mapBetween([[1,1], [2,2], [3,3], [4,4]], function (pair) {
+   return [pair[0], 0];
+});
+
+var test2 = mapCatBetween([[1,1], [2,2], [3,3], [4,4]], function (pair) {
+   return [pair[0], 0];
+});
+
+show(test1);
+
+show(test2);
+
+
+var points = mapCatBetween( [[1,2], [2,3], [4,4], [5,5], [6,6]], function (pair) {
+   return [pair[0], [0,0]];
+});
+
+show(points);
+
+
+///// lets try again...
+
+var mapBetween = function (xs, k) {
+   // xs is an array
+   // k is a function
+
+   var pairs = function (list) {
+      var ys = list.slice(1 /*, list.length */);
+      var zs = _.zip(list, ys);
+
+      // the last argument is solitary, not a pair
+/*    var last = zs.length - 1;
+      zs[last] = [ zs[last][0] ]; */
+      zs.pop();
+
+      return zs;
+   }
+
+   return _.map(pairs(xs), k);
+}
+
+var mapCatBetween = function (xs, k) {
+   // should be able to fold, though...
+   var combined = [];
+   _.each( mapBetween(xs, k), 
+      function (x) {
+         combined = combined.concat(x);
+      }
+   )
+   return combined;
+}
+
+
+var toSVG = function (points) { 
+   var a = points[0];
+   var b = points[1];
+   return "M" + a[0] + " " + a[1] + "L" + b[0] + " " + b[1];
+}
+
+var pathToSVG = function (points) {
+   return mapCatBetween(points, toSVG);
+}
+
+var growPath = function (oldpath) {
+   var side = 0;
+
+   // this takes two points [a,b], returns [a, new]
+   // next call will take [b,c], return [b,new], 
+   var growNewPoint = function (pair) {
+      var a = pair[0];
+      var b = pair[1];
+      side = !side; 
+      var newPoint = M.plus(a, M.mult( side ? left : right, M.minus(b, a) ));
+      return [ a, newPoint ];
+   }
+
+   // map it to the pairs of the old path
+   var path = mapCatBetween( oldpath, growNewPoint );
+
+   // since the last call was to [c,d] and returned [c, new],
+   // here we append d
+   path.push(oldpath[oldpath.length-1]);
+
+   return path;
+}
+
+
+var path0 = [ [0,0], [1,1], [2,2], [3,3], [4,4], [5,5] ];
+util.print("path0: \n");
+show(path0);
+
+var path1 = growPath(path0);
+util.print("path1: \n");
+show(path1); 
+
+var svg2 = pathToSVG(path1); 
+util.print("svg2: \n");
+show(svg2);
+
+
+
 
 
 
