@@ -45,7 +45,7 @@ var toSVG = function (points) {
 }
 
 var pathToSVG = function (points) {
-   return mapCatBetween(points, toSVG);
+   return mapCatBetween(points, toSVG).join('');
 }
 
 var growPath = function (oldpath) {
@@ -77,7 +77,7 @@ var growPath = function (oldpath) {
    return path;
 }
 
-var path0 = [ [0,0], [1,1], [2,2], [3,3], [4,4], [5,5] ];
+var path0 = [ [0,0], [1,1], [2,2], [3,3], [4,4], [500,367] ];
 util.print("path0: \n");
 show(path0);
 
@@ -90,3 +90,12 @@ util.print("svg2: \n");
 show(svg2);
 
 
+var fullSVG = function (path) {
+   var header = '<svg xmlns=\'http://www.w3.org/2000/svg\'>'
+   var polygon = '<path d=\'' + pathToSVG(path) + '\' style=\'fill:#cccccc;stroke:#000000;stroke-width:2\'' + '/>';
+   var footer = '</svg>'
+
+   return header + polygon + footer;
+}
+
+show(fullSVG(path1));
