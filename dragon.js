@@ -1,13 +1,12 @@
-/* Kevin Cantu (c) 2011 
-   [http://kevincantu.org]
-   library to draw dragon curves in SVG
+// Kevin Cantu (c) 2011 
+// http://kevincantu.org & https://github.com/killerswan/dragons
+//
+// library to draw dragon curves in SVG
+// requires: underscore.js
 
-   requires: underscore.js [http://documentcloud.github.com/underscore/]
-*/
 
-
-/////////////////////////////////////////
-// Node.JS
+// When testing via Node.JS
+// ------------------------
 /*
 var util = require("util");
 var _ = require("/code/dragon/underscore.js")._;
@@ -20,8 +19,8 @@ var show = function (o) {
 */
 
 
-/////////////////////////////////////////
 // MATRIX MATH
+// -----------
 
 Matrix = {};
 
@@ -55,9 +54,11 @@ Matrix.plus = function ( v1, v2 ) {
 }
 
 
-/////////////////////////////////////////
-// DRAGON CURVE MAKING
+// FUNCTIONAL STUFF
+// ----------------
 
+// Rather than map to each element of a list, 
+// map to pairs of first+second, second+third, etc.
 var mapBetween = function (xs, k) {
    // xs is an array
    // k is a function
@@ -66,7 +67,7 @@ var mapBetween = function (xs, k) {
       var ys = list.slice(1 /*, list.length */);
       var zs = _.zip(list, ys);
 
-      // the last argument is solitary, not a pair
+      // the last argument is solitary, not a pair, nix it
       zs.pop();
 
       return zs;
@@ -75,6 +76,7 @@ var mapBetween = function (xs, k) {
    return _.map(pairs(xs), k);
 }
 
+// mapCat
 var mapCatBetween = function (xs, k) {
    // should be able to fold, though...
    var combined = [];
@@ -86,17 +88,44 @@ var mapCatBetween = function (xs, k) {
    return combined;
 }
 
+
+// SVG STUFF
+// ---------
+
+// Turn a pair of points into an SVG path like "M1 1L2 2".
 var toSVG = function (points) { 
    var a = points[0];
    var b = points[1];
    return "M" + a[0] + " " + a[1] + "L" + b[0] + " " + b[1];
 }
 
+// Turn a sequence of points into a larger SVG path.
 var pathToSVG = function (points) {
    return mapCatBetween(points, toSVG).join('');
 }
 
+// Create the HTML text for an SVG tag containing a path.
+var fullSVG = function (path) {
+   var header = '<svg' +
+                ' xmlns=\'http://www.w3.org/2000/svg\'' +
+                ' style=\'height: 500px; width: 800px\'>'
+
+   var polygon = '<path' + 
+                 ' d=\'' + pathToSVG(path) + '\'' +
+                 ' style=\'stroke:#000;stroke-width:2\'' + 
+                 ' />';
+   var footer = '</svg>'
+
+   return header + polygon + footer;
+}
+
+
+// DRAGON CURVE MAKING
+// -------------------
+
+// Grow the curve from one sequence of points to the next, denser sequence.
 var growPath = function (oldpath) {
+
    // depending on which side we want to grow a new point...
    var side = false;
 
@@ -126,20 +155,7 @@ var growPath = function (oldpath) {
    return path;
 }
 
-var fullSVG = function (path) {
-   var header = '<svg' +
-                ' xmlns=\'http://www.w3.org/2000/svg\'' +
-                ' style=\'height: 500px; width: 800px\'>'
-
-   var polygon = '<path' + 
-                 ' d=\'' + pathToSVG(path) + '\'' +
-                 ' style=\'stroke:#000;stroke-width:2\'' + 
-                 ' />';
-   var footer = '</svg>'
-
-   return header + polygon + footer;
-}
-
+// Grow the curve from one sequence to the Nth next sequence.
 var growPathN = function (path, n) {
    var currentPath = path;
    for ( n; n > 0; n-=1 ) {
@@ -148,31 +164,48 @@ var growPathN = function (path, n) {
    return currentPath;
 }
 
+// Insert a dragon of order N within the HTML element, id,
+// starting at one point and moving to another.
 var dragon = function (id, start, end, orderN) {
+
+   // The path begins as the sequence of start and end points. 
+   var path = [start, end];
+
    var drawing = document.getElementById( id );
-   drawing.innerHTML = fullSVG( growPathN( [start, end], 
-                                           orderN ));
+   drawing.innerHTML = fullSVG( growPathN( path, orderN ));
 }
 
+// Alternatively, insert a dragon, iterate, iterate, etc.
 var stepDragon = function (id, start, end, orderN) {
    var drawing = document.getElementById( id );
 
+   // Initial path
    var currentPath = [start, end];
 
    var n = orderN;
 
+   // Recursive function (sure, dangerous in JavaScript, whatever)
+   // used to make dragons. 
    var loop = function () {
-      drawing.innerHTML = fullSVG(currentPath);
-      currentPath = growPath(currentPath);
 
+      // Draw the current path.
+      drawing.innerHTML = fullSVG(currentPath);
+
+      // If we're not done...
       if (n > 0) {
          n -= 1;
+
+         // Make the next path.
+         currentPath = growPath(currentPath);
+
+         // Delay, then recurse.
          window.setTimeout(loop, 900);
       }
    }
 
-   //window.setTimeout(loop, 10);
+   // Start recursive dragon making.
    loop();
 }
 
 
+// Though maps are more accurate now, be careful where you swim!
