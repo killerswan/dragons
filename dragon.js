@@ -10,6 +10,18 @@
 DRAGON = (function () {
 
 
+   // Customizable config
+   // -------------------
+
+   var Config = {
+      // The style applied to the <svg> element
+      svgStyle:     'height: 500px; width: 700px',
+      
+      // The style applied to the dragon's <polygon> element
+      polygonStyle: 'stroke:#f00;stroke-width:2'
+   };
+
+
    // Useful for testing via Node.JS
    // ------------------------------
    /*
@@ -116,11 +128,11 @@ DRAGON = (function () {
    var fullSVG = function (path) {
       var header = '<svg' +
                    ' xmlns=\'http://www.w3.org/2000/svg\'' +
-                   ' style=\'height: 500px; width: 800px\'>'
+                   ' style=\'' + Config.svgStyle + '\'>'
 
       var polygon = '<path' + 
                     ' d=\'' + pathToSVG(path) + '\'' +
-                    ' style=\'stroke:#000;stroke-width:2\'' + 
+                    ' style=\'' + Config.polygonStyle + '\'' + 
                     ' />';
       var footer = '</svg>'
 
