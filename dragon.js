@@ -1,8 +1,23 @@
-// Kevin Cantu (c) 2011 
-// http://kevincantu.org & https://github.com/killerswan/dragons
+// Copyright (c) 2011, Kevin Cantu <me@kevincantu.org>
 //
-// library to draw dragon curves in SVG
-// requires: underscore.js
+// Permission to use, copy, modify, and/or distribute this software for any
+// purpose with or without fee is hereby granted, provided that the above
+// copyright notice and this permission notice appear in all copies.
+//
+// The software is provided "as is" and the author disclaims all warranties
+// with regard to this software including all implied warranties of
+// merchantability and fitness.  In no event shall the author be liable for
+// any special, direct, indirect, or consequential damanges or any damages
+// whatsoever resulting from loss of use, data, your immortal soul, or 
+// profits, whether in an action of contract, negligence, or other 
+// tortious action, arising out of or in connection with the use or 
+// performance of this software.
+
+
+// dragon.js: a library to draw dragon curves
+// ------------------------------------------
+// This script requires underscore.js (which is awesome, and 
+// was tested on Chrome 8.0.  Enjoy!
 
 
 // Object for the external namespace: DRAGON
@@ -10,10 +25,10 @@
 DRAGON = (function () {
 
 
-   // Customizable config
-   // -------------------
+   // CONFIG
+   // ------
 
-   var Config = {
+   var config = {
       // The style applied to the <svg> element
       svgStyle:     'height: 500px; width: 700px',
       
@@ -22,27 +37,13 @@ DRAGON = (function () {
    };
 
 
-   // Useful for testing via Node.JS
-   // ------------------------------
-   /*
-   var util = require("util");
-   var _ = require("/code/dragon/lib/underscore.js")._;
-
-   var show = function (o) { 
-      U = require("util");
-      U.print(U.inspect(o) + "\n\n");
-      return o;
-   }
-   */
-
-
    // MATRIX MATH
    // -----------
 
-   Matrix = {};
+   matrix = {};
 
    // Multiply a vector and a matrix
-   Matrix.mult = function ( mat, vec ) {
+   matrix.mult = function ( mat, vec ) {
       // map across the rows of the matrix
       return _.map(mat, function (row) {
 
@@ -62,13 +63,13 @@ DRAGON = (function () {
    };
 
    // Subtract vectors
-   Matrix.minus = function ( v1, v2 ) {
+   matrix.minus = function ( v1, v2 ) {
       // still only for vectors
       return _.map(_.zip(v1, v2), function (tup) { return tup[0]-tup[1]; });
    }
 
    // Add vectors
-   Matrix.plus = function ( v1, v2 ) {
+   matrix.plus = function ( v1, v2 ) {
       // still only for vectors
       return _.map(_.zip(v1, v2), function (tup) { return tup[0]+tup[1]; });
    }
@@ -128,11 +129,11 @@ DRAGON = (function () {
    var fullSVG = function (path) {
       var header = '<svg' +
                    ' xmlns=\'http://www.w3.org/2000/svg\'' +
-                   ' style=\'' + Config.svgStyle + '\'>'
+                   ' style=\'' + config.svgStyle + '\'>'
 
       var polygon = '<path' + 
                     ' d=\'' + pathToSVG(path) + '\'' +
-                    ' style=\'' + Config.polygonStyle + '\'' + 
+                    ' style=\'' + config.polygonStyle + '\'' + 
                     ' />';
       var footer = '</svg>'
 
@@ -162,8 +163,8 @@ DRAGON = (function () {
          var a = pair[0];
          var b = pair[1];
          side = !side; 
-         var newPoint = Matrix.plus(a, Matrix.mult( side ? left : right, 
-                                                    Matrix.minus(b, a) ));
+         var newPoint = matrix.plus(a, matrix.mult( side ? left : right, 
+                                                    matrix.minus(b, a) ));
          return [ a, newPoint ];
       } 
 
