@@ -228,19 +228,30 @@ DRAGON = (function () {
       loop();
    }
 
+   // Make a dragon with a better fractal algorithm
+   var fractalMakeDragon = function () {
+      // we need to use the function to split a line into an angle
+      // then recurse using each new line, one left, one right
+      // decrementing a counter
+
+      // for each new pair of lines, put a new <polygon> path 
+      // into the <svg> (each will be individually clickable, right?)
+   };
+
 
    // Export these functions
    // ----------------------
    return {
       simple: makeSimpleDragon, 
-      steps: makeDragonWithSteps  
+      steps: makeDragonWithSteps,
+      fractal: fractalMakeDragon
 
       // Arguments to DRAGON.simple() or DRAGON.steps(): 
       //    id       id to insert within
       //    start    start point
       //    end      end point
       //    orderN   iterations required
-   }
+   };
 
 
 })();

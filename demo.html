@@ -6,11 +6,23 @@
 <body>
    <h1>Dragon Curve</h1>
 
-   <div id='drawing'>
+   <h2>In steps...</h2>
+   <div id='steps'>
    </div>
    
    <script>
-      DRAGON.steps("drawing", [500,300], [100,300], 14);
+      DRAGON.steps('steps', [500,300], [100,300], 14);
+   </script>
+
+   <h2>As a fractal...</h2>
+   <div>
+      <svg id='fractal'>
+         
+      </svg>
+   </div>
+   
+   <script>
+      DRAGON.fractal("fractal", [500,300], [100,300], 14);
    </script>
 </body>
 </html>
