@@ -229,13 +229,44 @@ DRAGON = (function () {
    }
 
    // Make a dragon with a better fractal algorithm
-   var fractalMakeDragon = function () {
-      // we need to use the function to split a line into an angle
-      // then recurse using each new line, one left, one right
-      // decrementing a counter
+   var fractalMakeDragon = function (svgid, ptA, ptC, state, lr) {
 
-      // for each new pair of lines, put a new <polygon> path 
-      // into the <svg> (each will be individually clickable, right?)
+      // for this line, put a new <path> 
+      // into the <svg> (which will be individually clickable, right?)
+      var path = document.createElement("path");
+      path.className = "dragon"; 
+      path.d = toSVG([ptA, ptB]);
+      var svg = document.getElementById(svgid);
+      svg.appendChild(path);
+
+      // split a line
+      // (modified from above)
+      // point, point, left/right -> new point
+      var growNewPoint = function (ptA, ptC, lr) {
+         var left  = [[ 1/2,-1/2 ],
+                      [ 1/2, 1/2 ]];
+
+         var right = [[ 1/2, 1/2 ],
+                      [-1/2, 1/2 ]];
+
+         return matrix.plus(ptA, matrix.mult( lr ? left : right, 
+                                              matrix.minus(ptC, ptA) ));
+      } 
+
+      // then recurse using each new line, one left, one right
+      var ptB = growNewPoint(ptA, ptC, true, state);
+
+      // wait, or other conditional...
+      var recurse = function () {
+         // when recursing, delete this svg path
+         svg.removeChild(path);
+
+         // then recurse, decrementing the state
+         fractalMakeDragon(ptA, ptB,  lr, state-1, svgid);
+         fractalMakeDragon(ptB, ptC, !lr, state-1, svgid);
+      }
+
+      window.setTimeout(recurse, 700);
    };
 
 
@@ -244,13 +275,21 @@ DRAGON = (function () {
    return {
       simple: makeSimpleDragon, 
       steps: makeDragonWithSteps,
-      fractal: fractalMakeDragon
 
       // Arguments to DRAGON.simple() or DRAGON.steps(): 
       //    id       id to insert within
       //    start    start point
       //    end      end point
       //    orderN   iterations required
+
+      fractal: fractalMakeDragon
+
+      // Arguments to DRAGON.fractal:
+      //    svgid    id of <svg> element
+      //    ptA      first point [x,y]
+      //    ptC      second point [x,y]
+      //    state    number indicating how many steps to recurse
+      //    lr       true/false to make new point on left or right
    };
 
 
