@@ -229,16 +229,13 @@ var DRAGON = (function () {
    };
 
    // Make a dragon with a better fractal algorithm
-   var fractalMakeDragon = function (svgid, ptA, ptC, state, lr) {
+   var fractalMakeDragon = function (svgid, ptA, ptC, state, lr, interval) {
 
       // for this line, put a new <path> 
       // into the <svg> (which will be individually clickable, right?)
-      var path = document.createElement("path");
-      path.className = "dragon"; 
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute( "class",  "dragon"); 
       path.setAttribute( "d", toSVG([ptA, ptC]) );
-
-      //var svg = document.getElementById(svgid).appendChild(
-      //   document.createElement("svg"));
       var svg = document.getElementById(svgid);
       svg.appendChild(path);
 
@@ -249,9 +246,8 @@ var DRAGON = (function () {
          // (modified from above)
          // point, point, left/right -> new point
          var growNewPoint = function (ptA, ptC, lr) {
-            var left  = [[ 1/2,-1/2 ],
-                         [ 1/2, 1/2 ]];
-
+            var left  = [[ 1/2,-1/2 ], 
+                         [ 1/2, 1/2 ]]; 
             var right = [[ 1/2, 1/2 ],
                          [-1/2, 1/2 ]];
 
@@ -260,18 +256,18 @@ var DRAGON = (function () {
          }; 
 
          // then recurse using each new line, one left, one right
-         var ptB = growNewPoint(ptA, ptC, true, state);
+         var ptB = growNewPoint(ptA, ptC, lr, state);
 
          var recurse = function () {
             // when recursing, delete this svg path
             svg.removeChild(path);
 
             // then recurse, decrementing the state
-            fractalMakeDragon(svgid, ptA, ptB, state-1,  lr);
-            fractalMakeDragon(svgid, ptB, ptC, state-1, !lr);
+            fractalMakeDragon(svgid, ptB, ptA, state-1, lr, interval);
+            fractalMakeDragon(svgid, ptB, ptC, state-1, lr, interval);
          };
 
-         window.setTimeout(recurse, 2000);
+         window.setTimeout(recurse, interval);
 
       }
    };
@@ -291,12 +287,19 @@ var DRAGON = (function () {
 
       fractal: fractalMakeDragon
 
-      // Arguments to DRAGON.fractal:
+      // ARGUMENTS
+      // ---------
       //    svgid    id of <svg> element
       //    ptA      first point [x,y] (from top left)
       //    ptC      second point [x,y]
       //    state    number indicating how many steps to recurse
       //    lr       true/false to make new point on left or right
+
+      // CONFIG
+      // ------
+      // CSS rules should be made for the following
+      //    svg#fractal
+      //    svg path.dragon
    };
 
 
