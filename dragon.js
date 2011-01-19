@@ -303,5 +303,5 @@ var DRAGON = (function () {
    };
 
 
-})();
+}());
 // On the edge of the world...
