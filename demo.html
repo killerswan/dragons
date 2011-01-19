@@ -2,6 +2,20 @@
 <head>
    <script src='./lib/underscore.js'></script>
    <script src='./dragon.js'></script>
+
+   <style>
+      /*svg*/
+      #fractal {
+         height: 500px; 
+         width: 700px;
+      }
+
+      /*svg path*/
+      .dragon {
+         stroke: #f00;
+         stroke-width: 2;
+      }
+   </style>
 </head>
 <body>
    <h1>Dragon Curve</h1>
@@ -11,18 +25,19 @@
    </div>
    
    <script>
-      DRAGON.steps('steps', [500,300], [100,300], 14);
+      // older, ok
+      //DRAGON.steps('steps', [500,300], [100,300], 14);
    </script>
 
    <h2>As a fractal...</h2>
    <div>
-      <svg id='fractal'>
-         
-      </svg>
+      <svg xmlns='http://www.w3.org/2000/svg' id='fractal'></svg>
    </div>
+   <div id='fractalprime'></div>
    
    <script>
-      DRAGON.fractal("fractal", [500,300], [100,300], 14, true);
+      DRAGON.fractal('fractal', [500,300], [100,300], 1, false);
+      //DRAGON.fractal('fractalprime', [500,300], [100,300], 1, false);
    </script>
 </body>
 </html>

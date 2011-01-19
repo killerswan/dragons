@@ -235,39 +235,45 @@ var DRAGON = (function () {
       // into the <svg> (which will be individually clickable, right?)
       var path = document.createElement("path");
       path.className = "dragon"; 
-      path.d = toSVG([ptA, ptC]);
+      path.setAttribute( "d", toSVG([ptA, ptC]) );
+
+      //var svg = document.getElementById(svgid).appendChild(
+      //   document.createElement("svg"));
       var svg = document.getElementById(svgid);
       svg.appendChild(path);
 
       // now let's make an angle from it...
+      if (state > 1) {
 
-      // split a line
-      // (modified from above)
-      // point, point, left/right -> new point
-      var growNewPoint = function (ptA, ptC, lr) {
-         var left  = [[ 1/2,-1/2 ],
-                      [ 1/2, 1/2 ]];
+         // split a line
+         // (modified from above)
+         // point, point, left/right -> new point
+         var growNewPoint = function (ptA, ptC, lr) {
+            var left  = [[ 1/2,-1/2 ],
+                         [ 1/2, 1/2 ]];
 
-         var right = [[ 1/2, 1/2 ],
-                      [-1/2, 1/2 ]];
+            var right = [[ 1/2, 1/2 ],
+                         [-1/2, 1/2 ]];
 
-         return matrix.plus(ptA, matrix.mult( lr ? left : right, 
-                                              matrix.minus(ptC, ptA) ));
-      }; 
+            return matrix.plus(ptA, matrix.mult( lr ? left : right, 
+                                                 matrix.minus(ptC, ptA) ));
+         }; 
 
-      // then recurse using each new line, one left, one right
-      var ptB = growNewPoint(ptA, ptC, true, state);
+         // then recurse using each new line, one left, one right
+         var ptB = growNewPoint(ptA, ptC, true, state);
 
-      var recurse = function () {
-         // when recursing, delete this svg path
-         svg.removeChild(path);
+         var recurse = function () {
+            // when recursing, delete this svg path
+            svg.removeChild(path);
 
-         // then recurse, decrementing the state
-         fractalMakeDragon(ptA, ptB,  lr, state-1, svgid);
-         fractalMakeDragon(ptB, ptC, !lr, state-1, svgid);
-      };
+            // then recurse, decrementing the state
+            fractalMakeDragon(svgid, ptA, ptB, state-1,  lr);
+            fractalMakeDragon(svgid, ptB, ptC, state-1, !lr);
+         };
 
-      window.setTimeout(recurse, 700);
+         window.setTimeout(recurse, 2000);
+
+      }
    };
 
 
@@ -287,7 +293,7 @@ var DRAGON = (function () {
 
       // Arguments to DRAGON.fractal:
       //    svgid    id of <svg> element
-      //    ptA      first point [x,y]
+      //    ptA      first point [x,y] (from top left)
       //    ptC      second point [x,y]
       //    state    number indicating how many steps to recurse
       //    lr       true/false to make new point on left or right
