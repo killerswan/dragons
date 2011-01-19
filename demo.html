@@ -12,25 +12,18 @@
          stroke-width: 2;
       }
    </style>
+
 </head>
 <body>
    <h1>Dragon Curve</h1>
 
-   <h2>In steps...</h2>
-   <div id='steps'>
-   </div>
-   
-   <script>
-      DRAGON.steps('steps', [500,300], [100,300], 14);
-   </script>
-
-   <h2>As a fractal...</h2>
    <div>
       <svg xmlns='http://www.w3.org/2000/svg' id='fractal'></svg>
    </div>
-   
+
    <script>
       DRAGON.fractal('fractal', [100,300], [500,300], 15, false, 700);
    </script>
+
 </body>
 </html>
