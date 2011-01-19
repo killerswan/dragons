@@ -22,7 +22,7 @@
 
 // Object for the external namespace: DRAGON
 // -----------------------------------------
-DRAGON = (function () {
+var DRAGON = (function () {
 
 
    // CONFIG
@@ -40,7 +40,7 @@ DRAGON = (function () {
    // MATRIX MATH
    // -----------
 
-   matrix = {};
+   var matrix = {};
 
    // Multiply a vector and a matrix
    matrix.mult = function ( mat, vec ) {
@@ -48,7 +48,7 @@ DRAGON = (function () {
       return _.map(mat, function (row) {
 
          // detect size issue (meh)
-         if (row.length != vec.length) { 
+         if (row.length !== vec.length) { 
             console.log("matrix and vector size mismatch");
          }
 
@@ -66,13 +66,13 @@ DRAGON = (function () {
    matrix.minus = function ( v1, v2 ) {
       // still only for vectors
       return _.map(_.zip(v1, v2), function (tup) { return tup[0]-tup[1]; });
-   }
+   };
 
    // Add vectors
    matrix.plus = function ( v1, v2 ) {
       // still only for vectors
       return _.map(_.zip(v1, v2), function (tup) { return tup[0]+tup[1]; });
-   }
+   };
 
 
    // FUNCTIONAL STUFF
@@ -92,10 +92,10 @@ DRAGON = (function () {
          zs.pop();
 
          return zs;
-      }
+      };
 
       return _.map(pairs(xs), k);
-   }
+   };
 
    // mapCat
    var mapCatBetween = function (xs, k) {
@@ -105,9 +105,9 @@ DRAGON = (function () {
          function (x) {
             combined = combined.concat(x);
          }
-      )
+      );
       return combined;
-   }
+   };
 
 
    // SVG STUFF
@@ -118,27 +118,27 @@ DRAGON = (function () {
       var a = points[0];
       var b = points[1];
       return "M" + a[0] + " " + a[1] + "L" + b[0] + " " + b[1];
-   }
+   };
 
    // Turn a sequence of points into a larger SVG path.
    var pathToSVG = function (points) {
       return mapCatBetween(points, toSVG).join('');
-   }
+   };
 
    // Create the HTML text for an SVG tag containing a path.
    var fullSVG = function (path) {
       var header = '<svg' +
                    ' xmlns=\'http://www.w3.org/2000/svg\'' +
-                   ' style=\'' + config.svgStyle + '\'>'
+                   ' style=\'' + config.svgStyle + '\'>';
 
       var polygon = '<path' + 
                     ' d=\'' + pathToSVG(path) + '\'' +
                     ' style=\'' + config.polygonStyle + '\'' + 
                     ' />';
-      var footer = '</svg>'
+      var footer = '</svg>';
 
       return header + polygon + footer;
-   }
+   };
 
 
    // DRAGON CURVE MAKING
@@ -166,7 +166,7 @@ DRAGON = (function () {
          var newPoint = matrix.plus(a, matrix.mult( side ? left : right, 
                                                     matrix.minus(b, a) ));
          return [ a, newPoint ];
-      } 
+      }; 
 
       // new path
       // map it to the pairs of the old path
@@ -174,7 +174,7 @@ DRAGON = (function () {
       path.push(oldpath[oldpath.length-1]); // append the last point
 
       return path;
-   }
+   };
 
    // Grow the curve from one sequence to the Nth next sequence.
    var growPathN = function (path, n) {
@@ -183,7 +183,7 @@ DRAGON = (function () {
          currentPath = growPath(currentPath);
       } 
       return currentPath;
-   }
+   };
 
    // Insert a dragon of order N within the HTML element, id,
    // starting at one point and moving to another.
@@ -194,7 +194,7 @@ DRAGON = (function () {
 
       var drawing = document.getElementById( id );
       drawing.innerHTML = fullSVG( growPathN( path, orderN ));
-   }
+   };
 
    // Alternatively, insert a dragon, iterate, iterate, etc.
    var makeDragonWithSteps = function (id, start, end, orderN) {
@@ -222,11 +222,11 @@ DRAGON = (function () {
             // Delay, then recurse.
             window.setTimeout(loop, 900);
          }
-      }
+      };
 
       // Start recursive dragon making.
       loop();
-   }
+   };
 
    // Make a dragon with a better fractal algorithm
    var fractalMakeDragon = function (svgid, ptA, ptC, state, lr) {
@@ -235,9 +235,11 @@ DRAGON = (function () {
       // into the <svg> (which will be individually clickable, right?)
       var path = document.createElement("path");
       path.className = "dragon"; 
-      path.d = toSVG([ptA, ptB]);
+      path.d = toSVG([ptA, ptC]);
       var svg = document.getElementById(svgid);
       svg.appendChild(path);
+
+      // now let's make an angle from it...
 
       // split a line
       // (modified from above)
@@ -251,12 +253,11 @@ DRAGON = (function () {
 
          return matrix.plus(ptA, matrix.mult( lr ? left : right, 
                                               matrix.minus(ptC, ptA) ));
-      } 
+      }; 
 
       // then recurse using each new line, one left, one right
       var ptB = growNewPoint(ptA, ptC, true, state);
 
-      // wait, or other conditional...
       var recurse = function () {
          // when recursing, delete this svg path
          svg.removeChild(path);
@@ -264,7 +265,7 @@ DRAGON = (function () {
          // then recurse, decrementing the state
          fractalMakeDragon(ptA, ptB,  lr, state-1, svgid);
          fractalMakeDragon(ptB, ptC, !lr, state-1, svgid);
-      }
+      };
 
       window.setTimeout(recurse, 700);
    };
