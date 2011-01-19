@@ -83,7 +83,7 @@ var DRAGON = (function () {
       var svg = document.getElementById(svgid); // call could be eliminated
       svg.appendChild(path);
 
-      // now let's make an angle from it...
+      // if we have more iterations to go...
       if (state > 1) {
 
          // make a new point, either to the left or right
@@ -98,9 +98,9 @@ var DRAGON = (function () {
                                                  matrix.minus(ptC, ptA) ));
          }; 
 
-         // then recurse using each new line, one left, one right
          var ptB = growNewPoint(ptA, ptC, lr, state);
 
+         // then recurse using each new line, one left, one right
          var recurse = function () {
             // when recursing deeper, delete this svg path
             svg.removeChild(path);
