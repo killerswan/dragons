@@ -23,22 +23,19 @@ var DRAGON = (function () {
    // MATRIX MATH
    // -----------
 
-   var matrix = {};
+   var matrix = {
+      mult: function ( m, v ) {
+         return [ m[0][0] * v[0] + m[0][1] * v[1],
+                  m[1][0] * v[0] + m[1][1] * v[1] ];
+      },
 
-   // Multiply a vector and a matrix
-   matrix.mult = function ( m, v ) {
-      return [ m[0][0] * v[0] + m[0][1] * v[1],
-               m[1][0] * v[0] + m[1][1] * v[1] ];
-   };
+      minus: function ( a, b ) {
+         return [ a[0]-b[0], a[1]-b[1] ];
+      },
 
-   // Subtract vectors
-   matrix.minus = function ( a, b ) {
-      return [ a[0]-b[0], a[1]-b[1] ];
-   };
-
-   // Add vectors
-   matrix.plus = function ( a, b ) {
-      return [ a[0]+b[0], a[1]+b[1] ];
+      plus: function ( a, b ) {
+         return [ a[0]+b[0], a[1]+b[1] ];
+      }
    };
 
 
@@ -46,7 +43,7 @@ var DRAGON = (function () {
    // ---------
 
    // Turn a pair of points into an SVG path like "M1 1L2 2".
-   var toSVG = function (a, b) {  // type system fail
+   var toSVGpath = function (a, b) {  // type system fail
       return "M" + a[0] + " " + a[1] + "L" + b[0] + " " + b[1];
    };
 
@@ -60,7 +57,7 @@ var DRAGON = (function () {
       // make a new <path>
       var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute( "class",  "dragon"); 
-      path.setAttribute( "d", toSVG(ptA, ptC) );
+      path.setAttribute( "d", toSVGpath(ptA, ptC) );
 
       // append the new path to the existing <svg>
       var svg = document.getElementById(svgid); // call could be eliminated
@@ -119,4 +116,3 @@ var DRAGON = (function () {
    };
 
 }());
-// On the edge of the world...
