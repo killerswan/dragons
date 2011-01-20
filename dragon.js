@@ -16,8 +16,7 @@
 
 // dragon.js: a library to draw dragon curves
 // ------------------------------------------
-// This script requires underscore.js (which is awesome), and 
-// was tested on Chrome 8.0.  Enjoy!
+// Tested on Chrome 8.0.  Enjoy!
 var DRAGON = (function () {
 
 
@@ -27,35 +26,19 @@ var DRAGON = (function () {
    var matrix = {};
 
    // Multiply a vector and a matrix
-   matrix.mult = function ( mat, vec ) {
-      // map across the rows of the matrix
-      return _.map(mat, function (row) {
-
-         // detect size issue (meh)
-         if (row.length !== vec.length && console && console.log) { 
-            console.log("matrix and vector size mismatch");
-         }
-
-         // fold across the columns to make a vector
-         return _.foldl(_.zip(row, vec), 
-                        function (sum, pair) {
-                           return sum + pair[0] * pair[1];
-                        }, 
-                        0
-         );
-      });
+   matrix.mult = function ( m, v ) {
+      return [ m[0][0] * v[0] + m[0][1] * v[1],
+               m[1][0] * v[0] + m[1][1] * v[1] ];
    };
 
    // Subtract vectors
-   matrix.minus = function ( v1, v2 ) {
-      // still only for vectors
-      return _.map(_.zip(v1, v2), function (tup) { return tup[0]-tup[1]; });
+   matrix.minus = function ( a, b ) {
+      return [ a[0]-b[0], a[1]-b[1] ];
    };
 
    // Add vectors
-   matrix.plus = function ( v1, v2 ) {
-      // still only for vectors
-      return _.map(_.zip(v1, v2), function (tup) { return tup[0]+tup[1]; });
+   matrix.plus = function ( a, b ) {
+      return [ a[0]+b[0], a[1]+b[1] ];
    };
 
 
